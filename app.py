@@ -6,7 +6,7 @@ from keras.preprocessing import image
 import pickle
 from keras.models import load_model
 
-UPLOAD_FOLDER = 'store_folder'
+PEOPLE_FOLDER = os.path.join('static', 'people_photo')
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 model = load_model('model/age_model.h5')
@@ -16,7 +16,7 @@ with open('model/age_dict.pkl', 'rb') as handle:
     age_dict = pickle.load(handle)
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['UPLOAD_FOLDER'] = PEOPLE_FOLDER
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -39,7 +39,7 @@ def home():
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-            test_image = image.load_img(f'store_folder/{filename}', target_size = (64, 64))
+            test_image = image.load_img(f'{PEOPLE_FOLDER}/{filename}', target_size = (64, 64))
             test_image = image.img_to_array(test_image)
             test_image = np.expand_dims(test_image, axis = 0)
             result = model.predict(test_image)
@@ -53,8 +53,9 @@ def home():
             prob_result = float(result[0][position_result])
             response_text = f'La persona posee {age_dict[label_result]} con un {(prob_result*100):.2f}% de probabilidad!'
             print(f'store_folder/{filename}')
-            return render_template('index.html', prediction_text = response_text, user_image = f'store_folder/{filename}')
-    return render_template('index.html')
+            full_filename = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            return render_template('index.html', prediction_text = response_text, user_image = full_filename)
+    return render_template('index_base.html')
 
 if __name__ == "__main__":
     app.run(debug = True)
