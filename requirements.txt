@@ -3,4 +3,4 @@ uwsgi
 numpy
 keras
 werkzeug
-tensorflow
+tensorflow-cpu
