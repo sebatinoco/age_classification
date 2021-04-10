@@ -1,6 +1,6 @@
 Flask
 uwsgi
 numpy
-keras
+keras==2.3.0
 werkzeug
 tensorflow==2.0.0
