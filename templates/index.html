@@ -3,7 +3,7 @@
 <!--From https://codepen.io/frytyler/pen/EGdtg-->
 <head>
   <meta charset="UTF-8">
-  <title>ML Model</title>
+  <title>Age classification</title>
   <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
 <link href='https://fonts.googleapis.com/css?family=Arimo' rel='stylesheet' type='text/css'>
 <link href='https://fonts.googleapis.com/css?family=Hind:300' rel='stylesheet' type='text/css'>
@@ -14,20 +14,23 @@
 
 <body>
  <div class="login">
-	<h1>Predict Salary Analysis</h1>
-
+	<h1>Age classification</h1>
+  <h6>Este es un proyecto para clasificar la edad de personas en base a fotos de cara. Prueba subiendo la tuya!</h6>
      <!-- Main Input For Receiving Query to our ML -->
-    <form action="{{ url_for('predict')}}"method="post">
-    	<input type="text" name="experience" placeholder="Experience" required="required" />
-        <input type="text" name="test_score" placeholder="Test Score" required="required" />
-		<input type="text" name="interview_score" placeholder="Interview Score" required="required" />
+    <form method=post enctype=multipart/form-data>
+      <input type=file name=file>
 
         <button type="submit" class="btn btn-primary btn-block btn-large">Predict</button>
     </form>
 
    <br>
    <br>
+   <body>
+   <img src="{{ user_image }}" alt="User Image">
+   </body>
+   <br>
    {{ prediction_text }}
+
 
  </div>
 
