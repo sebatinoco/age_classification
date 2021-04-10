@@ -3,4 +3,4 @@ uwsgi
 numpy
 keras
 werkzeug
-tensorflow-cpu
+tensorflow==2.0.0
