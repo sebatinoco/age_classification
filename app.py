@@ -52,7 +52,6 @@ def home():
             label_result = list(labels.keys())[position_result]
             prob_result = float(result[0][position_result])
             response_text = f'La persona posee {age_dict[label_result]} con un {(prob_result*100):.2f}% de probabilidad!'
-            print(f'store_folder/{filename}')
             full_filename = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             return render_template('index.html', prediction_text = response_text, user_image = full_filename)
     return render_template('index_base.html')
