@@ -1,2 +1,6 @@
 Flask
 uwsgi
+pickle
+numpy
+keras
+werkzeug
