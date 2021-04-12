@@ -6,3 +6,4 @@ werkzeug
 tensorflow==2.0.0
 pillow
 h5py==2.10.0
+boto3

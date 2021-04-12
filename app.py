@@ -5,9 +5,14 @@ from werkzeug.utils import secure_filename
 from keras.preprocessing import image
 import pickle
 from tensorflow.keras.models import load_model
+import boto3
 
-PEOPLE_FOLDER = os.path.join('static', 'people_photo')
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+
+client = boto3.client('s3',
+                    aws_access_key_id='AKIA5YEFJW4AZGJ76SUI',
+                    aws_secret_access_key= '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')
+BUCKET_NAME='face-age-classification-storage'
 
 model = load_model('model/age_model.h5')
 with open('model/labels.pkl', 'rb') as handle:
@@ -16,7 +21,6 @@ with open('model/age_dict.pkl', 'rb') as handle:
     age_dict = pickle.load(handle)
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = PEOPLE_FOLDER
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -35,11 +39,17 @@ def home():
         if file.filename == '':
             flash('No selected file')
             return redirect(request.url)
+
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            file.save(filename)
+            client.upload_file(
+                Bucket = BUCKET_NAME,
+                Filename=filename,
+                Key = filename
+            )
 
-            test_image = image.load_img(f'{PEOPLE_FOLDER}/{filename}', target_size = (64, 64))
+            test_image = image.load_img(filename, target_size = (64, 64))
             test_image = image.img_to_array(test_image)
             test_image = np.expand_dims(test_image, axis = 0)
             result = model.predict(test_image)
@@ -52,8 +62,7 @@ def home():
             label_result = list(labels.keys())[position_result]
             prob_result = float(result[0][position_result])
             response_text = f'La persona posee {age_dict[label_result]} con un {(prob_result*100):.2f}% de probabilidad!'
-            full_filename = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            return render_template('index.html', prediction_text = response_text, user_image = full_filename)
+            return render_template('index_base.html', prediction_text = response_text)
     return render_template('index_base.html')
 
 if __name__ == "__main__":
