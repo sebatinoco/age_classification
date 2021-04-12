@@ -5,3 +5,4 @@ keras==2.3.0
 werkzeug
 tensorflow==2.0.0
 pillow
+h5py==2.10.0
