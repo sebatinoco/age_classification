@@ -4,7 +4,7 @@ from flask import Flask, request, render_template, flash, redirect
 from werkzeug.utils import secure_filename
 from keras.preprocessing import image
 import pickle
-from keras.models import load_model
+from tensorflow.keras.models import load_model
 
 PEOPLE_FOLDER = os.path.join('static', 'people_photo')
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
