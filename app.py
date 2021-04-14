@@ -10,13 +10,9 @@ import boto3
 
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
-#client = boto3.client('s3',
-#                    aws_access_key_id= os.environ['S3_KEY'],
-#                    aws_secret_access_key= os.environ['S3_SECRET'])
-
 client = boto3.client('s3',
-                    aws_access_key_id= 'AKIA5YEFJW4AZGJ76SUI',
-                    aws_secret_access_key= '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')
+                    aws_access_key_id= os.environ['S3_KEY'],
+                    aws_secret_access_key= os.environ['S3_SECRET'])
 
 BUCKET_NAME='face-age-classification-storage'
 
