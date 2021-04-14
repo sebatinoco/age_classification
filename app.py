@@ -4,17 +4,29 @@ from flask import Flask, request, render_template, flash, redirect
 from werkzeug.utils import secure_filename
 from keras.preprocessing import image
 import pickle
-from tensorflow.keras.models import load_model
+import tensorflow as tf
+import tensorflow_hub as hub
 import boto3
 
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
+#client = boto3.client('s3',
+#                    aws_access_key_id= os.environ['S3_KEY'],
+#                    aws_secret_access_key= os.environ['S3_SECRET'])
+
 client = boto3.client('s3',
-                    aws_access_key_id= os.environ['S3_KEY'],
-                    aws_secret_access_key= os.environ['S3_SECRET'])
+                    aws_access_key_id= 'AKIA5YEFJW4AZGJ76SUI',
+                    aws_secret_access_key= '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')
+
 BUCKET_NAME='face-age-classification-storage'
 
-model = load_model('model/age_model.h5')
+STATIC_FOLDER = 'static'
+# Path to the folder where we'll store the upload before prediction
+UPLOAD_FOLDER = STATIC_FOLDER + '/photos'
+
+model = tf.keras.models.load_model('model/age_model.h5', custom_objects={
+                                       "KerasLayer": hub.KerasLayer})
+
 with open('model/labels.pkl', 'rb') as handle:
     labels = pickle.load(handle)
 with open('model/age_dict.pkl', 'rb') as handle:
@@ -42,14 +54,11 @@ def home():
 
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file.save(filename)
-            client.upload_file(
-                Bucket = BUCKET_NAME,
-                Filename=filename,
-                Key = filename
-            )
+            fullname = os.path.join(UPLOAD_FOLDER, filename)
+            file.save(fullname)
+            client.upload_file(Bucket = BUCKET_NAME, Filename = fullname, Key = filename)
 
-            test_image = image.load_img(filename, target_size = (64, 64))
+            test_image = image.load_img(fullname, target_size = (64, 64))
             test_image = image.img_to_array(test_image)
             test_image = np.expand_dims(test_image, axis = 0)
             result = model.predict(test_image)
@@ -58,9 +67,6 @@ def home():
             label_result = list(labels.keys())[position_result]
             prob_result = float(result[0][position_result])
 
-            position_result = np.argmax(result)
-            label_result = list(labels.keys())[position_result]
-            prob_result = float(result[0][position_result])
             response_text = f'La persona posee {age_dict[label_result]} con un {(prob_result*100):.2f}% de probabilidad!'
             return render_template('index_base.html', prediction_text = response_text)
     return render_template('index_base.html')
