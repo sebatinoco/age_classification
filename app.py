@@ -25,8 +25,18 @@ model = tf.keras.models.load_model('model/age_model.h5', custom_objects={
 
 with open('model/labels.pkl', 'rb') as handle:
     labels = pickle.load(handle)
-with open('model/age_dict.pkl', 'rb') as handle:
-    age_dict = pickle.load(handle)
+
+age_dict = {'1': 'entre 1 y 2 años',
+            '2': 'entre 3 y 9 años',
+            '3': 'entre 10 y 20 años',
+            '4': 'entre 21 y 25 años',
+            '5': 'entre 26 y 27 años',
+            '6': 'entre 28 y 31 años',
+            '7': 'entre 32 y 36 años',
+            '8': 'entre 37 y 45 años',
+            '9': 'entre 46 y 54 años',
+            '10': 'entre 55 y 65 años',
+            '11': 'sobre 65 años'}
 
 app = Flask(__name__)
 
@@ -63,7 +73,7 @@ def home():
             label_result = list(labels.keys())[position_result]
             prob_result = float(result[0][position_result])
 
-            response_text = f'La persona posee {age_dict[label_result]} con un {(prob_result*100):.2f}% de probabilidad!'
+            response_text = f'La persona posee {age_dict[label_result]} con un {(prob_result*100):.1f}% de probabilidad!'
             return render_template('index_base.html', prediction_text = response_text)
     return render_template('index_base.html')
 
