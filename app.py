@@ -29,14 +29,10 @@ with open('model/labels.pkl', 'rb') as handle:
 age_dict = {'1': 'entre 1 y 2 años',
             '2': 'entre 3 y 9 años',
             '3': 'entre 10 y 20 años',
-            '4': 'entre 21 y 25 años',
-            '5': 'entre 26 y 27 años',
-            '6': 'entre 28 y 31 años',
-            '7': 'entre 32 y 36 años',
-            '8': 'entre 37 y 45 años',
-            '9': 'entre 46 y 54 años',
-            '10': 'entre 55 y 65 años',
-            '11': 'sobre 65 años'}
+            '4': 'entre 21 y 27 años',
+            '5': 'entre 28 y 45 años',
+            '6': 'entre 46 y 65 años',
+            '7': 'sobre 65 años'}
 
 app = Flask(__name__)
 
